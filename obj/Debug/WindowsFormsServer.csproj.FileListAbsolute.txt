@@ -1,0 +1,9 @@
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\bin\Debug\WindowsFormsServer.exe.config
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\bin\Debug\WindowsFormsServer.exe
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\bin\Debug\WindowsFormsServer.pdb
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\obj\Debug\WindowsFormsServer.csprojResolveAssemblyReference.cache
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\obj\Debug\WindowsFormsServer.Form1.resources
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\obj\Debug\WindowsFormsServer.Properties.Resources.resources
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\obj\Debug\WindowsFormsServer.csproj.GenerateResource.Cache
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\obj\Debug\WindowsFormsServer.exe
+c:\users\jlurobot\documents\visual studio 2015\Projects\WindowsFormsServer\WindowsFormsServer\obj\Debug\WindowsFormsServer.pdb
