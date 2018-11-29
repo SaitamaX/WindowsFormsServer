@@ -10,10 +10,10 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-
+//.Net版本4.5.2
 struct CI
 {
-    public Dictionary<string, Socket> dic;
+    public Socket iScoket;
     public int chatNumber;
 }
 
@@ -22,7 +22,8 @@ namespace WindowsFormsServer
     public partial class Form1 : Form
     {
         const int MAXCLIENT = 10;
-        List<CI> listClient = new List<CI>();
+        Dictionary<string, CI> listClient = new Dictionary<string, CI>();
+        int counter = 0;//用于客户端计数
         public Form1()
         {
             InitializeComponent();
@@ -47,6 +48,7 @@ namespace WindowsFormsServer
                 Thread thread = new Thread(AcceptInfo);
                 thread.IsBackground = true;
                 thread.Start(socket);
+                button1.Enabled = false;
             }
             catch (Exception ex)
             {
@@ -63,13 +65,16 @@ namespace WindowsFormsServer
                 {
                     Socket tSocket = socket.Accept();
                     string point = tSocket.RemoteEndPoint.ToString();
+                    System.Console.WriteLine(point);
                     CI temp = new CI();
-                    temp.dic = new Dictionary<string, Socket>();
-                    temp.dic.Add(point, tSocket);
-                    listClient.Add(temp);
+                    temp.iScoket = tSocket;
+                    listClient.Add(point, temp);
                     Thread th = new Thread(ReceiveMsg);
                     th.IsBackground = true;
                     th.Start(tSocket);
+                    richTextBox1.AppendText("客户端" + tSocket.RemoteEndPoint.ToString() + 
+                        "已连接" + System.Environment.NewLine);
+                    counter++;
                 }catch(Exception ex)
                 {
                     MessageBox.Show(ex.Message);
@@ -80,6 +85,7 @@ namespace WindowsFormsServer
         void ReceiveMsg(object obj)
         {
             Socket client = obj as Socket;
+            int index = counter;//该线程的index记录该客户端对应的List索引
             while (true)
             {
                 try
@@ -87,7 +93,32 @@ namespace WindowsFormsServer
                     byte[] buffer = new byte[1024 * 1024];
                     int n = client.Receive(buffer);
                     string content = Encoding.Unicode.GetString(buffer, 0, n);
-                    System.Console.WriteLine(content);
+                    //System.Console.WriteLine(content);
+                    string[] s = content.Split('#', '$');
+                    string currAddress = client.RemoteEndPoint.ToString(); 
+                    if (s[1] == "1")
+                    {//该线程对应客户端已更改聊天房间
+                        CI temp = new CI();
+                        temp.chatNumber = int.Parse(s[3]);
+                        temp.iScoket = client;
+                        listClient[currAddress] = temp;
+                    }
+                    else if(s[1] == "0")//该客户端发送了消息
+                    {
+                        byte[] sendBuf = Encoding.Unicode.GetBytes(content);
+                        foreach (var item in listClient)
+                        {
+                            if(item.Value.chatNumber == listClient[currAddress].chatNumber &&
+                                item.Key != currAddress)//同一房间且非发送者自身
+                            {
+                                listClient[currAddress].iScoket.Send(sendBuf);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("客户端" + currAddress + "发送的消息格式有误");
+                    }
                     //处理信息并转发给其余客户端的逻辑
                 }
                 catch (Exception ex)
