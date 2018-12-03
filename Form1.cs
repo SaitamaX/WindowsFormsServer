@@ -49,6 +49,8 @@ namespace WindowsFormsServer
                 thread.IsBackground = true;
                 thread.Start(socket);
                 button1.Enabled = false;
+                textBox1.Enabled = false;
+                textBox2.Enabled = false;
             }
             catch (Exception ex)
             {
@@ -92,6 +94,16 @@ namespace WindowsFormsServer
                 {
                     byte[] buffer = new byte[1024 * 1024];
                     int n = client.Receive(buffer);
+                    if(client.Poll(0, SelectMode.SelectRead))
+                    {
+                        int nRead = client.Receive(buffer);
+                        if(nRead == 0)
+                        {
+                            richTextBox1.AppendText("客户端" + client.RemoteEndPoint.ToString() +
+                       "已断开连接" + System.Environment.NewLine);
+                            break;
+                        }
+                    }
                     string content = Encoding.Unicode.GetString(buffer, 0, n);
                     //System.Console.WriteLine(content);
                     string[] s = content.Split('#', '$');
@@ -111,7 +123,9 @@ namespace WindowsFormsServer
                             if(item.Value.chatNumber == listClient[currAddress].chatNumber &&
                                 item.Key != currAddress)//同一房间且非发送者自身
                             {
-                                listClient[currAddress].iScoket.Send(sendBuf);
+                               item.Value.iScoket.Send(sendBuf);
+                                //Socket temp = item.Value.iScoket;
+                                //temp.Send(sendBuf);
                             }
                         }
                     }
@@ -123,7 +137,15 @@ namespace WindowsFormsServer
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    if (ex.GetType() == typeof(SocketException))
+                    {
+                        richTextBox1.AppendText("客户端" + client.RemoteEndPoint.ToString() +
+                       "已断开连接" + System.Environment.NewLine);
+                    }
+                    else
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                     break;
                 }
             }
