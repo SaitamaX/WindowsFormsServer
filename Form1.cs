@@ -101,6 +101,7 @@ namespace WindowsFormsServer
                         {
                             richTextBox1.AppendText("客户端" + client.RemoteEndPoint.ToString() +
                        "已断开连接" + System.Environment.NewLine);
+                            counter--;
                             break;
                         }
                     }
@@ -141,6 +142,7 @@ namespace WindowsFormsServer
                     {
                         richTextBox1.AppendText("客户端" + client.RemoteEndPoint.ToString() +
                        "已断开连接" + System.Environment.NewLine);
+                        counter--;
                     }
                     else
                     {
@@ -148,6 +150,21 @@ namespace WindowsFormsServer
                     }
                     break;
                 }
+            }
+        }
+        void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (MessageBox.Show(
+                    "是否要关闭服务器\n警告:此时还有"+counter.ToString()+"个客户端未断开连接",
+                    "提示",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Question) != DialogResult.Cancel)
+            {
+                System.Environment.Exit(0);
+            }
+            else
+            {
+                e.Cancel = true;
             }
         }
     }
